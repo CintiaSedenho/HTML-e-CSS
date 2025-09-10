@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle de Despesas</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, select, button { margin: 5px; padding: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+  <h2>Adicionar Produto ou Serviço</h2>
+
+  <form id="form">
+    <input type="text" id="nome" placeholder="Nome" required />
+    <input type="text" id="categoria" placeholder="Categoria" required />
+    <input type="number" id="preco" placeholder="Preço (R$)" step="0.01" required />
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <h3>Lista de Despesas</h3>
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Categoria</th>
+        <th>Preço (R$)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Total: R$ <span id="total">0.00</span></h3>
+
+  <script>
+    const form = document.getElementById('form');
+    const tabela = document.querySelector('#tabela tbody');
+    const totalSpan = document.getElementById('total');
+
+    const produtos = [];
+
+    function calcularTotalDespesas(lista) {
+      return lista.reduce((soma, item) => soma + item.preco, 0);
+    }
+
+    function atualizarTabela() {
+      tabela.innerHTML = '';
+      for (const item of produtos) {
+        const row = tabela.insertRow();
+        row.insertCell().textContent = item.nome;
+        row.insertCell().textContent = item.categoria;
+        row.insertCell().textContent = `R$ ${item.preco.toFixed(2)}`;
+      }
+      const total = calcularTotalDespesas(produtos);
+      totalSpan.textContent = total.toFixed(2);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('nome').value.trim();
+      const categoria = document.getElementById('categoria').value.trim();
+      const preco = parseFloat(document.getElementById('preco').value);
+
+      if (nome && categoria && !isNaN(preco)) {
+        produtos.push({ nome, categoria, preco });
+        form.reset();
+        atualizarTabela();
+      } else {
+        alert("Por favor, preencha todos os campos corretamente.");
+      }
+    });
+  </script>
+
+</body>
+</html>
